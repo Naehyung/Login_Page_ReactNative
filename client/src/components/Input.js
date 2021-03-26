@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-export default function Input({style, ...props}) {
+export default function Input({style, onChangeText, ...props}) {
   return (
-    <TextInput {...props} style={[styles.input, style]} />
+    <TextInput {...props} style={[styles.input, style]} onChangeText={onChangeText}/>
   );
 }
 
