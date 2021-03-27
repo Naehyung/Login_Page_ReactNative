@@ -22,15 +22,27 @@ app.post("/register", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  bcrypt.hash(password, saltRounds, (err, hash) => {
+  const sqlSELECT = "SELECT * FROM users where username = ?";
+  db.query(sqlSELECT, username, (err, result) => {
     if (err) {
-      console.log(err);
+      res.send({ err: err });
     }
-    const sqlInsert = "INSERT INTO users (username, password) VALUES (?,?);";
-    db.query(sqlInsert, [username, hash], (err, result) => {
-      console.log(err);
-    });
-  });
+   
+    if(result.length > 0) {
+      res.send("Username already exists");
+    } else {
+      res.send("");
+      bcrypt.hash(password, saltRounds, (err, hash) => {
+        if (err) {
+          console.log(err);
+        }
+        const sqlInsert = "INSERT INTO users (username, password) VALUES (?,?);";
+        db.query(sqlInsert, [username, hash], (err, result) => {
+          console.log(err);
+        });
+      });
+    }
+  })
 });
 
 const verifyJWT = (req, res, next) => {
@@ -42,7 +54,6 @@ const verifyJWT = (req, res, next) => {
   } else {
     jwt.verify(token, "jwtSecret", (err, decoded) => {
       if (err) {
-        console.log(err);
         res.json({ auth: false, message: "You failed to authenticate" });
       } else {
         req.userId = decoded.id;

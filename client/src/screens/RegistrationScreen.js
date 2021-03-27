@@ -11,6 +11,8 @@ export default function RegistrationScreen({ navigation }) {
   const [usernameReg, setUsernameReg] = useState("");
   const [passwordReg, setPasswordReg] = useState("");
 
+  const [error, setError] = useState("");
+
   Axios.defaults.withCredentials = true;
  
   const register = () => {
@@ -21,6 +23,7 @@ export default function RegistrationScreen({ navigation }) {
     })
       .then((response) => {
         console.log(response.data);
+        setError(response.data);
       })
       .catch(function (err) {
         console.log(err);
@@ -54,6 +57,7 @@ export default function RegistrationScreen({ navigation }) {
           setPasswordReg(text);
         }}
       />
+      <Text style={styles.errerMessage}>{error}</Text>
       <FilledButton
         title={"Register"}
         style={styles.loginButton}
@@ -87,5 +91,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 60,
     right: 16,
+  },
+
+  errerMessage: {
+    color:'red',
   },
 });
